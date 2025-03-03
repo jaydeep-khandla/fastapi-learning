@@ -70,3 +70,6 @@ htmlcov/
 .nox/
 coverage.xml
 *.cover
+
+#others
+credentials/
