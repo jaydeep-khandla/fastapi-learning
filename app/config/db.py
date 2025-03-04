@@ -4,7 +4,6 @@ from pymongo.server_api import ServerApi
 from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
-from contextlib import contextmanager
 
 SQLALCHEMY_DATABASE_URL = os.getenv("SQLALCHEMY_DATABASE_URL")
 
@@ -13,7 +12,6 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 Base = declarative_base()
 
-@contextmanager
 def get_db():
     db = SessionLocal()
     try:
@@ -23,14 +21,14 @@ def get_db():
 
 def check_sql_connection():
     try:
-        with get_db() as db:
-            # Try to execute a simple query
-            db.execute(text('SELECT 1'))
-            print("Successfully connected to SQL Database!")
+        db = next(get_db())  # Get a session instance
+        db.execute(text("SELECT 1"))  # Run a test query
         return True
     except Exception as e:
-        print(f"Failed to connect to SQL Database: {e}")
-        raise
+        print(f"Database connection failed: {e}")
+        return False
+    finally:
+        db.close()  # Always close the session
 
 def init_sql_db():
     try:
