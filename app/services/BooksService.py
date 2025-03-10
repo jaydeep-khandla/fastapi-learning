@@ -8,10 +8,7 @@ from sqlalchemy.orm import Session
     
 class BooksService:
     
-    def __init__(self, db: Session):
-        self.db = db
-    
-    def create_book(self, book: Books):
+    def create_book(self, book: Books, db: Session):
         # db = next(get_db())
         print(book)
         book_model = Books(
@@ -23,11 +20,11 @@ class BooksService:
             rating=book.rating,
             description=book.description
         )
-        self.db.add(book_model)
-        self.db.commit()
-        self.db.refresh(book_model)
+        db.add(book_model)
+        db.commit()
+        db.refresh(book_model)
         return book_model
     
-    def list_books(self):
+    def list_books(self, db: Session):
         # db = next(self.get_db())
-        return self.db.query(Books).all()
+        return db.query(Books).all()

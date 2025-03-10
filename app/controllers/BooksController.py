@@ -6,19 +6,19 @@ from sqlalchemy.orm import Session
 from fastapi import Depends
 
 class BooksController:
+    
+    def __init__(self):
+        self.books_service = BooksService()
 
     def create_book(self, request: Book, db: Session = Depends(get_db)):
-        books_service = BooksService(db)
-        
         try:
-            created_book = books_service.create_book(request)
+            created_book = self.books_service.create_book(request, db)
             return created_book
         except Exception as e:
             raise HTTPException(status_code=500, detail=f"Error: {e}")
 
     def list_books(self, db: Session = Depends(get_db)):
-        books_service = BooksService(db)
         try:
-            return books_service.list_books()
+            return self.books_service.list_books(db)
         except Exception as e:
             raise HTTPException(status_code=500, detail=f"Error: {e}")
